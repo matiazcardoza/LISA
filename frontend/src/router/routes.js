@@ -4,7 +4,7 @@ import RegisterPage from '../pages/auth/RegisterPage.vue'
 import MainLayout from '../layouts/dashboard/MainLayout.vue'
 
 import DashboardPage from '../pages/dashboard/DashboardPage.vue'
-import FiscalizadoresPage from '../pages/fiscalizadores/FiscalizadoresPage.vue'
+import InspectoresPage from '../pages/Inspectores/InspectoresPage.vue'
 import VehiculosPage from '@/pages/vehiculos/VehiculosPage.vue'
 
 const routes = [
@@ -33,9 +33,9 @@ const routes = [
       },
 
       {
-        path: 'fiscalizadores',
-        name: 'Fiscalizadores',
-        component: FiscalizadoresPage
+        path: 'inspectores',
+        name: 'Inspectores',
+        component: InspectoresPage
       },
       {
         path: 'vehiculos',

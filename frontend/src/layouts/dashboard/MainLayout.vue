@@ -15,7 +15,7 @@ import {
   Sparkles,
   Sun,
   Moon,
-  ShieldCheck,
+  BadgeCheck,
   Car
 } from 'lucide-vue-next'
 import api from '../../axios'
@@ -38,7 +38,7 @@ export default {
     Sparkles,
     Sun,
     Moon,
-    ShieldCheck,
+    BadgeCheck,
     Car
   },
   data() {
@@ -59,9 +59,9 @@ export default {
           icon: 'Users'
         },
         {
-          name: 'Fiscalizadores',
-          href: '/dashboard/fiscalizadores',
-          icon: 'ShieldCheck'
+          name: 'Inspectores',
+          href: '/dashboard/inspectores',
+          icon: 'BadgeCheck'
         },
         {
           name: 'Vehiculos',
