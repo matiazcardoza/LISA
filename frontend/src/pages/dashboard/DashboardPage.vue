@@ -1,149 +1,148 @@
 <template>
-  <MainLayout>
-    <div class="space-y-6">
-      <div class="bg-gradient-to-r from-blue-600 to-blue-700 rounded-xl p-6 text-white">
+  <!-- ✅ SIN MainLayout wrapper -->
+  <div class="space-y-6">
+    <div class="bg-gradient-to-r from-blue-600 to-blue-700 rounded-xl p-6 text-white">
+      <div class="flex items-center justify-between">
+        <div>
+          <h1 class="text-2xl font-bold mb-2">
+            ¡Bienvenido, {{ user?.name || 'Usuario' }}!
+          </h1>
+          <p class="text-blue-100">
+            Aquí tienes un resumen de tu actividad reciente
+          </p>
+        </div>
+        <div class="hidden md:block">
+          <div class="w-20 h-20 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
+            <Sparkles class="w-10 h-10 text-white" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div 
+        v-for="stat in stats" 
+        :key="stat.title"
+        class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow duration-200"
+      >
         <div class="flex items-center justify-between">
           <div>
-            <h1 class="text-2xl font-bold mb-2">
-              ¡Bienvenido, {{ user?.name || 'Usuario' }}!
-            </h1>
-            <p class="text-blue-100">
-              Aquí tienes un resumen de tu actividad reciente
-            </p>
-          </div>
-          <div class="hidden md:block">
-            <div class="w-20 h-20 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
-              <Sparkles class="w-10 h-10 text-white" />
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div 
-          v-for="stat in stats" 
-          :key="stat.title"
-          class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow duration-200"
-        >
-          <div class="flex items-center justify-between">
-            <div>
-              <p class="text-sm font-medium text-gray-600 dark:text-gray-400">{{ stat.title }}</p>
-              <p class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-2">{{ stat.value }}</p>
-              <div class="flex items-center mt-2">
-                <span 
-                  :class="[
-                    'text-sm font-medium',
-                    stat.change.startsWith('+') ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'
-                  ]"
-                >
-                  {{ stat.change }}
-                </span>
-                <span class="text-sm text-gray-500 dark:text-gray-400 ml-2">vs mes anterior</span>
-              </div>
-            </div>
-            <div 
-              :class="[
-                'w-12 h-12 rounded-lg flex items-center justify-center',
-                stat.bgColor
-              ]"
-            >
-              <component :is="stat.icon" :class="['w-6 h-6', stat.iconColor]" />
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
-          <div class="flex items-center justify-between mb-6">
-            <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Actividad Semanal</h3>
-            <button class="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-500 font-medium">
-              Ver detalles
-            </button>
-          </div>
-          <div class="h-64 flex items-center justify-center bg-gray-50 dark:bg-gray-900 rounded-lg">
-            <div class="text-center">
-              <TrendingUp class="w-12 h-12 text-gray-400 mx-auto mb-4" />
-              <p class="text-gray-500 dark:text-gray-400">Gráfico de actividad aquí</p>
-            </div>
-          </div>
-        </div>
-
-        <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
-          <div class="flex items-center justify-between mb-6">
-            <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Distribución de Datos</h3>
-            <button class="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-500 font-medium">
-              Ver detalles
-            </button>
-          </div>
-          <div class="h-64 flex items-center justify-center bg-gray-50 dark:bg-gray-900 rounded-lg">
-            <div class="text-center">
-              <PieChart class="w-12 h-12 text-gray-400 mx-auto mb-4" />
-              <p class="text-gray-500 dark:text-gray-400">Gráfico circular aquí</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
-        <div class="p-6 border-b border-gray-200 dark:border-gray-700">
-          <div class="flex items-center justify-between">
-            <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Actividad Reciente</h3>
-            <button class="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-500 font-medium">
-              Ver todo
-            </button>
-          </div>
-        </div>
-        <div class="p-6">
-          <div class="space-y-4">
-            <div 
-              v-for="activity in recentActivities" 
-              :key="activity.id"
-              class="flex items-center space-x-4 p-3 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg transition-colors duration-200"
-            >
-              <div 
+            <p class="text-sm font-medium text-gray-600 dark:text-gray-400">{{ stat.title }}</p>
+            <p class="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-2">{{ stat.value }}</p>
+            <div class="flex items-center mt-2">
+              <span 
                 :class="[
-                  'w-10 h-10 rounded-full flex items-center justify-center',
-                  activity.bgColor
+                  'text-sm font-medium',
+                  stat.change.startsWith('+') ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'
                 ]"
               >
-                <component :is="activity.icon" :class="['w-5 h-5', activity.iconColor]" />
-              </div>
-              <div class="flex-1 min-w-0">
-                <p class="text-sm font-medium text-gray-900 dark:text-gray-100">{{ activity.title }}</p>
-                <p class="text-sm text-gray-500 dark:text-gray-400">{{ activity.description }}</p>
-              </div>
-              <div class="text-sm text-gray-500 dark:text-gray-400">
-                {{ activity.time }}
-              </div>
+                {{ stat.change }}
+              </span>
+              <span class="text-sm text-gray-500 dark:text-gray-400 ml-2">vs mes anterior</span>
             </div>
+          </div>
+          <div 
+            :class="[
+              'w-12 h-12 rounded-lg flex items-center justify-center',
+              stat.bgColor
+            ]"
+          >
+            <component :is="stat.icon" :class="['w-6 h-6', stat.iconColor]" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
+        <div class="flex items-center justify-between mb-6">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Actividad Semanal</h3>
+          <button class="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-500 font-medium">
+            Ver detalles
+          </button>
+        </div>
+        <div class="h-64 flex items-center justify-center bg-gray-50 dark:bg-gray-900 rounded-lg">
+          <div class="text-center">
+            <TrendingUp class="w-12 h-12 text-gray-400 mx-auto mb-4" />
+            <p class="text-gray-500 dark:text-gray-400">Gráfico de actividad aquí</p>
           </div>
         </div>
       </div>
 
       <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
-        <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Acciones Rápidas</h3>
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <button 
-            v-for="action in quickActions" 
-            :key="action.title"
-            class="flex flex-col items-center p-4 border-2 border-dashed border-gray-200 dark:border-gray-700 rounded-lg hover:border-blue-300 dark:hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900 transition-colors duration-200 group"
-          >
-            <div class="w-12 h-12 bg-gray-100 dark:bg-gray-700 rounded-lg flex items-center justify-center mb-3 group-hover:bg-blue-100 dark:group-hover:bg-blue-800">
-              <component :is="action.icon" class="w-6 h-6 text-gray-600 dark:text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-300" />
-            </div>
-            <span class="text-sm font-medium text-gray-700 dark:text-gray-300 group-hover:text-blue-700 dark:group-hover:text-blue-200">
-              {{ action.title }}
-            </span>
+        <div class="flex items-center justify-between mb-6">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Distribución de Datos</h3>
+          <button class="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-500 font-medium">
+            Ver detalles
           </button>
+        </div>
+        <div class="h-64 flex items-center justify-center bg-gray-50 dark:bg-gray-900 rounded-lg">
+          <div class="text-center">
+            <PieChart class="w-12 h-12 text-gray-400 mx-auto mb-4" />
+            <p class="text-gray-500 dark:text-gray-400">Gráfico circular aquí</p>
+          </div>
         </div>
       </div>
     </div>
-  </MainLayout>
+
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
+      <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+        <div class="flex items-center justify-between">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Actividad Reciente</h3>
+          <button class="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-500 font-medium">
+            Ver todo
+          </button>
+        </div>
+      </div>
+      <div class="p-6">
+        <div class="space-y-4">
+          <div 
+            v-for="activity in recentActivities" 
+            :key="activity.id"
+            class="flex items-center space-x-4 p-3 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg transition-colors duration-200"
+          >
+            <div 
+              :class="[
+                'w-10 h-10 rounded-full flex items-center justify-center',
+                activity.bgColor
+              ]"
+            >
+              <component :is="activity.icon" :class="['w-5 h-5', activity.iconColor]" />
+            </div>
+            <div class="flex-1 min-w-0">
+              <p class="text-sm font-medium text-gray-900 dark:text-gray-100">{{ activity.title }}</p>
+              <p class="text-sm text-gray-500 dark:text-gray-400">{{ activity.description }}</p>
+            </div>
+            <div class="text-sm text-gray-500 dark:text-gray-400">
+              {{ activity.time }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
+      <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Acciones Rápidas</h3>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <button 
+          v-for="action in quickActions" 
+          :key="action.title"
+          class="flex flex-col items-center p-4 border-2 border-dashed border-gray-200 dark:border-gray-700 rounded-lg hover:border-blue-300 dark:hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900 transition-colors duration-200 group"
+        >
+          <div class="w-12 h-12 bg-gray-100 dark:bg-gray-700 rounded-lg flex items-center justify-center mb-3 group-hover:bg-blue-100 dark:group-hover:bg-blue-800">
+            <component :is="action.icon" class="w-6 h-6 text-gray-600 dark:text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-300" />
+          </div>
+          <span class="text-sm font-medium text-gray-700 dark:text-gray-300 group-hover:text-blue-700 dark:group-hover:text-blue-200">
+            {{ action.title }}
+          </span>
+        </button>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
-import MainLayout from '../../layouts/dashboard/MainLayout.vue'
+// ✅ QUITAR la importación de MainLayout
 import {
   Sparkles,
   Users,
@@ -162,7 +161,7 @@ import {
 export default {
   name: 'Dashboard',
   components: {
-    MainLayout,
+    // ✅ QUITAR MainLayout de los componentes
     Sparkles,
     Users,
     FileText,

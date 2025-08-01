@@ -1,3 +1,164 @@
+<script>
+import {
+  LayoutDashboard,
+  Home,
+  Users,
+  Settings,
+  BarChart3,
+  FileText,
+  Menu,
+  X,
+  User,
+  LogOut,
+  Bell,
+  ChevronDown,
+  Sparkles,
+  Sun,
+  Moon,
+  ShieldCheck
+} from 'lucide-vue-next'
+import api from '../../axios'
+
+export default {
+  name: 'MainLayout',
+  components: {
+    LayoutDashboard,
+    Home,
+    Users,
+    Settings,
+    BarChart3,
+    FileText,
+    Menu,
+    X,
+    User,
+    LogOut,
+    Bell,
+    ChevronDown,
+    Sparkles,
+    Sun,
+    Moon,
+    ShieldCheck
+  },
+  data() {
+    return {
+      sidebarOpen: false,
+      userMenuOpen: false,
+      user: null,
+      isDarkMode: false,
+      navigationItems: [
+        {
+          name: 'Dashboard',
+          href: '/dashboard',
+          icon: 'LayoutDashboard'
+        },
+        {
+          name: 'Usuarios',
+          href: '/dashboard/users',
+          icon: 'Users'
+        },
+        {
+          name: 'Fiscalizadores',
+          href: '/dashboard/fiscalizadores', // ✅ Corregido: agregada la ruta correcta
+          icon: 'ShieldCheck'
+        },
+        {
+          name: 'Reportes',
+          href: '/dashboard/reports',
+          icon: 'BarChart3'
+        },
+        {
+          name: 'Documentos',
+          href: '/dashboard/documents',
+          icon: 'FileText'
+        },
+        {
+          name: 'Configuración',
+          href: '/dashboard/settings',
+          icon: 'Settings'
+        }
+      ]
+    }
+  },
+  computed: {
+    pageTitle() {
+      const currentRoute = this.$route.matched[this.$route.matched.length - 1]
+      if (currentRoute && currentRoute.name) {
+        return currentRoute.name
+      }
+      return 'Dashboard'
+    }
+  },
+  mounted() {
+    this.loadUserData()
+    document.addEventListener('click', this.handleOutsideClick)
+    this.checkDarkMode()
+  },
+  beforeUnmount() {
+    document.removeEventListener('click', this.handleOutsideClick)
+  },
+  methods: {
+    loadUserData() {
+      const userData = localStorage.getItem('user')
+      if (userData) {
+        try {
+          this.user = JSON.parse(userData)
+        } catch (error) {
+          console.error('Error al analizar los datos del usuario:', error)
+          localStorage.removeItem('user')
+          this.$router.push('/login')
+        }
+      }
+    },
+    toggleSidebar() {
+      this.sidebarOpen = !this.sidebarOpen
+    },
+    toggleUserMenu() {
+      this.userMenuOpen = !this.userMenuOpen
+    },
+    handleOutsideClick(event) {
+      if (this.userMenuOpen && this.$refs.userMenu && !this.$refs.userMenu.contains(event.target)) {
+        this.userMenuOpen = false
+      }
+    },
+    async logout() {
+      try {
+        await api.post('/logout')
+      } catch (error) {
+        console.error('Error al cerrar sesión:', error)
+      } finally {
+        localStorage.removeItem('user')
+        this.$router.push('/login')
+      }
+    },
+    checkDarkMode() {
+      if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.classList.add('dark')
+        this.isDarkMode = true
+      } else {
+        document.documentElement.classList.remove('dark')
+        this.isDarkMode = false
+      }
+    },
+    toggleDarkMode() {
+      if (this.isDarkMode) {
+        localStorage.theme = 'light'
+        document.documentElement.classList.remove('dark')
+      } else {
+        localStorage.theme = 'dark'
+        document.documentElement.classList.add('dark')
+      }
+      this.isDarkMode = !this.isDarkMode
+    },
+    // ✅ Nuevo método para manejar la navegación y cerrar sidebar en móvil
+    handleNavigation() {
+      if (window.innerWidth < 1024) { // lg breakpoint
+        this.sidebarOpen = false
+      }
+    }
+  }
+}
+</script>
+
 <template>
   <div class="flex h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
     <aside
@@ -27,9 +188,10 @@
           v-for="item in navigationItems"
           :key="item.name"
           :to="item.href"
+          @click="handleNavigation"
           :class="[
             'flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors duration-200',
-            $route.path.startsWith(item.href)
+            $route.path === item.href || ($route.path.startsWith(item.href) && item.href !== '/dashboard')
               ? 'bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-200 border-r-2 border-blue-600'
               : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-gray-100'
           ]"
@@ -138,9 +300,10 @@
         </div>
       </header>
 
+      <!-- ✅ IMPORTANTE: Agregar router-view para renderizar las páginas hijas -->
       <main class="flex-1 overflow-y-auto">
         <div class="p-6">
-          <slot />
+          <router-view />
         </div>
       </main>
     </div>
@@ -152,148 +315,3 @@
     ></div>
   </div>
 </template>
-
-<script>
-import {
-  LayoutDashboard,
-  Home,
-  Users,
-  Settings,
-  BarChart3,
-  FileText,
-  Menu,
-  X,
-  User,
-  LogOut,
-  Bell,
-  ChevronDown,
-  Sparkles,
-  Sun,
-  Moon
-} from 'lucide-vue-next'
-import api from '../../axios'
-
-export default {
-  name: 'MainLayout',
-  components: {
-    LayoutDashboard,
-    Home,
-    Users,
-    Settings,
-    BarChart3,
-    FileText,
-    Menu,
-    X,
-    User,
-    LogOut,
-    Bell,
-    ChevronDown,
-    Sparkles,
-    Sun,
-    Moon
-  },
-  data() {
-    return {
-      sidebarOpen: false,
-      userMenuOpen: false,
-      user: null,
-      isDarkMode: false,
-      navigationItems: [
-        {
-          name: 'Dashboard',
-          href: '/dashboard',
-          icon: 'LayoutDashboard'
-        },
-        {
-          name: 'Usuarios',
-          href: '/dashboard/users',
-          icon: 'Users'
-        },
-        {
-          name: 'Reportes',
-          href: '/dashboard/reports',
-          icon: 'BarChart3'
-        },
-        {
-          name: 'Documentos',
-          href: '/dashboard/documents',
-          icon: 'FileText'
-        },
-        {
-          name: 'Configuración',
-          href: '/dashboard/settings',
-          icon: 'Settings'
-        }
-      ]
-    }
-  },
-  computed: {
-    pageTitle() {
-      const currentRoute = this.navigationItems.find(item => this.$route.path.startsWith(item.href))
-      return currentRoute ? currentRoute.name : 'Página'
-    }
-  },
-  mounted() {
-    this.loadUserData()
-    document.addEventListener('click', this.handleOutsideClick)
-    this.checkDarkMode()
-  },
-  beforeUnmount() {
-    document.removeEventListener('click', this.handleOutsideClick)
-  },
-  methods: {
-    loadUserData() {
-      const userData = localStorage.getItem('user')
-      if (userData) {
-        try {
-          this.user = JSON.parse(userData)
-        } catch (error) {
-          console.error('Error al analizar los datos del usuario:', error)
-          localStorage.removeItem('user')
-          this.$router.push('/login')
-        }
-      }
-    },
-    toggleSidebar() {
-      this.sidebarOpen = !this.sidebarOpen
-    },
-    toggleUserMenu() {
-      this.userMenuOpen = !this.userMenuOpen
-    },
-    handleOutsideClick(event) {
-      if (this.userMenuOpen && this.$refs.userMenu && !this.$refs.userMenu.contains(event.target)) {
-        this.userMenuOpen = false
-      }
-    },
-    async logout() {
-      try {
-        await api.post('/logout')
-      } catch (error) {
-        console.error('Error al cerrar sesión:', error)
-      } finally {
-        localStorage.removeItem('user')
-        this.$router.push('/login')
-      }
-    },
-    checkDarkMode() {
-      if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-        document.documentElement.classList.add('dark')
-        this.isDarkMode = true
-      } else {
-        document.documentElement.classList.remove('dark')
-        this.isDarkMode = false
-      }
-    },
-    toggleDarkMode() {
-      if (this.isDarkMode) {
-        localStorage.theme = 'light'
-        document.documentElement.classList.remove('dark')
-      } else {
-        localStorage.theme = 'dark'
-        document.documentElement.classList.add('dark')
-      }
-      this.isDarkMode = !this.isDarkMode
-    }
-  }
-}
-</script>

@@ -1,45 +1,38 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import LoginPage from '../pages/auth/LoginPage.vue'
-import RegisterPage from '../pages/auth/RegisterPage.vue'
-import Dashboard from '../pages/dashboard/DashboardPage.vue'
+import routes from './routes.js'
 
-const routes = [
-  {
-    path: '/login',
-    name: 'Login',
-    component: LoginPage,
-    meta: { requiresGuest: true }
-  },
-  {
-    path: '/register',
-    name: 'Register',
-    component: RegisterPage,
-    meta: { requiresGuest: true }
-  },
-  {
-    path: '/',
-    name: 'Dashboard',
-    component: Dashboard,
-    meta: { requiresAuth: true }
-  }
-]
-
+// Crear el router con las rutas importadas
 const router = createRouter({
   history: createWebHistory(),
   routes
 })
 
-router.beforeEach((to) => {
+// Guards de navegación global (si necesitas agregar más lógica)
+router.beforeEach((to, from, next) => {
   const user = localStorage.getItem('user')
   const isAuthenticated = !!user
   
+  // Verificar autenticación
   if (to.meta.requiresAuth && !isAuthenticated) {
-    return { name: 'Login' }
+    next({ name: 'Login' })
+    return
   }
   
+  // Verificar si es una ruta para invitados
   if (to.meta.requiresGuest && isAuthenticated) {
-    return { name: 'Dashboard' }
+    next({ name: 'Dashboard' })
+    return
   }
+  
+  // Continuar con la navegación
+  next()
+})
+
+// Guard después de cada navegación (opcional)
+router.afterEach((to, from) => {
+  // Lógica después de cada navegación
+  // Por ejemplo, analytics, scroll to top, etc.
+  window.scrollTo(0, 0)
 })
 
 export default router
