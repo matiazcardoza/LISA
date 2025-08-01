@@ -15,7 +15,8 @@ import {
   Sparkles,
   Sun,
   Moon,
-  ShieldCheck
+  ShieldCheck,
+  Car
 } from 'lucide-vue-next'
 import api from '../../axios'
 
@@ -37,7 +38,8 @@ export default {
     Sparkles,
     Sun,
     Moon,
-    ShieldCheck
+    ShieldCheck,
+    Car
   },
   data() {
     return {
@@ -58,8 +60,13 @@ export default {
         },
         {
           name: 'Fiscalizadores',
-          href: '/dashboard/fiscalizadores', // ✅ Corregido: agregada la ruta correcta
+          href: '/dashboard/fiscalizadores',
           icon: 'ShieldCheck'
+        },
+        {
+          name: 'Vehiculos',
+          href: '/dashboard/vehiculos',
+          icon: 'Car'
         },
         {
           name: 'Reportes',

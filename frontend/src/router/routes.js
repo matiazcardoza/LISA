@@ -5,6 +5,7 @@ import MainLayout from '../layouts/dashboard/MainLayout.vue'
 
 import DashboardPage from '../pages/dashboard/DashboardPage.vue'
 import FiscalizadoresPage from '../pages/fiscalizadores/FiscalizadoresPage.vue'
+import VehiculosPage from '@/pages/vehiculos/VehiculosPage.vue'
 
 const routes = [
   {
@@ -35,6 +36,11 @@ const routes = [
         path: 'fiscalizadores',
         name: 'Fiscalizadores',
         component: FiscalizadoresPage
+      },
+      {
+        path: 'vehiculos',
+        name: 'Vehiculos',
+        component: VehiculosPage
       },
     ]
   },
