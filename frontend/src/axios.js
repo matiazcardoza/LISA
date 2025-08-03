@@ -41,16 +41,8 @@ function getCookieValue(name) {
   return null
 }
 
-export const getCsrfCookie = async () => {
-  try {
-    await axios.get('http://localhost:8000/sanctum/csrf-cookie', {
-      withCredentials: true
-    })
-    await new Promise(resolve => setTimeout(resolve, 100))
-  } catch (error) {
-    console.error('Error obteniendo CSRF cookie:', error)
-    throw error
-  }
+export const getCsrfCookie = () => {
+  return api.get('/sanctum/csrf-cookie')
 }
 
 export default api
